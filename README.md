@@ -1,3 +1,3 @@
-#A sudoku puzzle game written in python
+## Puzzle game sudoku
 
-The sudoku format problem will be handled through backtracking algorithm.
+Program to solve a sudoku problem through backtracking.
