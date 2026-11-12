@@ -6,7 +6,17 @@ build-backend = "setuptools.build_meta"
 name = "pseudo-sudoku"
 version = "0.2.0"
 description = "Python-native Sudoku with MRV bitmask solver, unique puzzle generator, logical hints, and Tkinter desktop app"
+readme = "README.md"
 requires-python = ">=3.8"
+license = { text = "MIT" }
+authors = [
+    { name = "pseudozac" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
 dependencies = []
 
 [project.scripts]

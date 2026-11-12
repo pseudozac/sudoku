@@ -155,4 +155,4 @@ The Python engine implements an optimized constraint satisfaction solver:
 
 ## License
 
-MIT License. Feel free to explore, modify, and build upon this project.
+This project is licensed under the [MIT License](LICENSE) — see the [LICENSE](LICENSE) file for details.
