@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pseudo-sudoku"
+version = "0.2.0"
+description = "Python-native Sudoku with MRV bitmask solver, unique puzzle generator, logical hints, and Tkinter desktop app"
+requires-python = ">=3.8"
+dependencies = []
+
+[project.scripts]
+pseudo-sudoku = "pseudo_sudoku.app:main"
+
+[tool.setuptools.packages.find]
+include = ["pseudo_sudoku*"]

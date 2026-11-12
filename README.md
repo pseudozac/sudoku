@@ -1,69 +1,158 @@
 # Pseudo Sudoku
 
-A sudoku game that can also solve itself. You can play a puzzle yourself, or press **Solve** and watch a backtracking algorithm work through the board one cell at a time.
+A logic-driven Sudoku game, puzzle generator, and backtracking solver visualizer available in two distinct editions: a **browser-based Web App** and a native **Python Desktop & CLI Suite**.
 
-**Live demo:** https://pseudo-sudoku.vercel.app/
+Play puzzles yourself, request human-readable logical hints, or toggle the solver to watch backtracking algorithms work through boards in real time.
 
-The repo has two parts:
+- **Web Live Demo:** [https://pseudo-sudoku.vercel.app/](https://pseudo-sudoku.vercel.app/)
+- **Repository Structure:** The codebase separates the **Web Edition** (`web/`) from the **Python Desktop & Engine** (`python/`), with the original prototype preserved in `bin/`.
 
-| Path | What it is |
-| --- | --- |
-| `index.html` | The playable web app: a single self-contained file (HTML, CSS and JavaScript). |
-| `bin/primaryCode.py` | The original command-line solver, a short Python script that solves one hard-coded board. |
+---
 
-## Features (web app)
+## Editions Overview
 
-- **Four difficulty levels:** Easy, Medium, Hard and Expert. Each new game generates a fresh random puzzle (34, 42, 50 or 56 cells removed from a solved board).
-- **Play tools:** number pad, erase, pencil notes, undo and hints.
-- **Mistake limit:** three wrong entries end the game. A timer tracks how long you take.
-- **Backtracking visualizer:** watch the solver try digits, hit conflicts and backtrack. Live counters show steps, backtracks, cells solved and elapsed time.
-  - Controls: Solve, Pause and Step (one move at a time).
-  - Speed: Gentle (200 ms), Normal (50 ms), Swift (12 ms) or Instant Solve.
-- **Sound:** an optional background melody and tile sound effects, toggled with the Melody button. Browsers only allow audio after your first click or tap.
+| Feature | Web Edition (`web/`) | Python Desktop & CLI (`python/`) | Original Prototype (`bin/`) |
+| :--- | :--- | :--- | :--- |
+| **Interface** | Responsive Web App (HTML/Tailwind/JS) | Native Tkinter Desktop GUI + Headless CLI | Terminal output |
+| **Dependencies** | None (CDN for Tailwind & Google Fonts) | Zero dependencies (Python 3.8+ standard library) | None (Standard Python 3) |
+| **Solver Algorithm** | Recursive backtracking (left-to-right) | **MRV Bitmask Backtracking** (fastest-first) | Simple recursive backtracking |
+| **Visualizer** | Animated grid with live telemetry & speed presets | Step-by-step visualizer with node/backtrack metrics | None (instant solve) |
+| **Puzzle Generator** | Random cell removal across 4 difficulties | **Guaranteed unique** puzzles across 4 difficulties | Single hard-coded board |
+| **Hint System** | Direct cell reveal | **Logical hints** (Naked Singles & Hidden Singles) | None |
+| **Audio** | Tactile sound effects & relaxing melody | Silent / native desktop | None |
+| **Platform Target** | Any modern browser / mobile browser | Windows, macOS, Linux (plus standalone `.exe`) | Python CLI |
 
-### Keyboard shortcuts
+---
 
-| Key | Action |
-| --- | --- |
-| `1`–`9` | Enter a number in the selected cell |
-| `Backspace` / `Delete` | Erase the selected cell |
-| Arrow keys | Move the selection |
-| `Ctrl/Cmd + Z` | Undo |
+## Directory Structure
 
-Keyboard input is disabled while the visualizer is running.
+```
+sudoku/
+├── .gitignore             # Git ignore rules for Python, caches, and build artifacts
+├── index.html             # Web entry point & redirect to web/index.html
+├── vercel.json            # Vercel deployment configuration & routing
+├── README.md              # Project documentation (this file)
+│
+├── web/                   # Web Edition (Browser)
+│   ├── index.html         # Complete self-contained web game & visualizer
+│   └── README.md          # Web documentation & controls
+│
+├── python/                # Python Desktop Edition & Solver Engine
+│   ├── pseudo_sudoku/
+│   │   ├── __init__.py    # Package exports
+│   │   ├── __main__.py    # python -m pseudo_sudoku entry point
+│   │   ├── app.py         # Tkinter desktop GUI & CLI runner
+│   │   ├── engine.py      # Bitmask + MRV solver, step generator, and hints
+│   │   └── generator.py   # Unique puzzle generator across 4 difficulties
+│   ├── tests/
+│   │   ├── __init__.py
+│   │   └── test_sudoku.py # Unit test suite (7 tests)
+│   ├── build_windows.bat  # Standalone Windows .exe builder (PyInstaller)
+│   ├── main.py            # Main application launcher
+│   ├── pyproject.toml     # Packaging metadata (pip install -e .)
+│   └── README.md          # Python documentation & build instructions
+│
+└── bin/                   # Legacy Prototype
+    └── primaryCode.py     # The original 78-line backtracking script
+```
 
-## Running it
+---
 
-**Web app:** open `index.html` in a browser, or use the live demo above. There is no build step and no install. It loads Tailwind CSS and Google Fonts from a CDN, so it needs an internet connection to look right.
+## 1. Web Edition
 
-**Python solver:** requires Python 3 and no extra packages.
+Play directly in your browser or run locally with zero installation.
+
+- **Online Demo:** [https://pseudo-sudoku.vercel.app/](https://pseudo-sudoku.vercel.app/)
+- **Local Run:** Double-click `web/index.html` or serve via:
+  ```bash
+  python -m http.server 8000
+  # Open http://localhost:8000/web/
+  ```
+
+### Web Highlights
+- **Tactile Cozy UI:** Japanese typography accents, soothing palette, custom icons.
+- **Difficulty Tiers:** Easy, Medium, Hard, and Expert.
+- **Interactive Tools:** Pencil notes, 3-strike mistake counter, undo stack (`Ctrl+Z`), timer.
+- **Backtracking Visualizer:**
+  - Watch the solver try digits, encounter conflicts, and backtrack.
+  - Live counters for steps, backtracks, filled cells, and elapsed time.
+  - Controls: **Solve**, **Pause**, and single-move **Step**.
+  - Four speeds: Gentle (200 ms), Normal (50 ms), Swift (12 ms), and Instant.
+- **Sound Effects & Music:** Ambient background melody and tile click sounds (toggle via the Melody button).
+
+---
+
+## 2. Python Desktop Edition
+
+A full-featured native desktop application, command-line solver, and algorithmic engine built entirely with Python standard libraries (`tkinter` for GUI).
+
+### Quickstart
+
+#### Launch the Tkinter Desktop GUI:
+```bash
+# From within the python/ folder:
+cd python
+python main.py
+
+# Or directly from the repository root:
+python python/main.py
+```
+
+#### Run in Headless CLI Mode:
+Generate a board, show the first logical deduction hint, and benchmark solving time in milliseconds:
+```bash
+# Default medium puzzle
+python python/main.py --cli
+
+# Specify difficulty (easy, medium, hard, expert) and reproducible seed
+python python/main.py --cli --difficulty hard --seed 1234
+```
+
+#### Run the Unit Test Suite:
+```bash
+# Run 7 automated tests covering validation, MRV solver, uniqueness, hints:
+python -m unittest discover -s python/tests -t python -v
+```
+
+#### Build Standalone Windows Executable:
+A pre-configured batch script packages the application into a single `.exe` using PyInstaller:
+1. Double-click `python/build_windows.bat` or run:
+   ```cmd
+   cd python
+   build_windows.bat
+   ```
+2. The resulting binary will be located in `python/dist/PseudoSudoku.exe`.
+
+---
+
+## 3. Original Prototype Script
+
+The repository originated from a lightweight 78-line terminal backtracking solver. It solves a hard-coded matrix and prints the before-and-after board:
 
 ```bash
-python3 bin/primaryCode.py
+python bin/primaryCode.py
 ```
 
-It prints the starting board, then the solved board. To solve a different puzzle, edit the `board` list at the top of the file (`0` marks an empty cell).
+---
 
-```
-7 8 0 | 4 0 0 | 1 2 0
-6 0 0 | 0 7 5 | 0 0 9
-...
-```
+## How the Solvers Work
 
-## How the solver works
+### Standard Backtracking (Web Edition & Prototype)
+1. Locates the next empty cell (left-to-right, top-to-bottom).
+2. Tests digits 1 through 9.
+3. Checks if the digit is valid in the current row, column, and 3×3 subgrid.
+4. If valid, recursively proceeds to the next empty cell.
+5. If a dead end is encountered, erases the candidate (backtracks) and tries the next number.
 
-Both the Python script and the web app use the same backtracking approach:
+### MRV Bitmask Backtracking (Python Edition)
+The Python engine implements an optimized constraint satisfaction solver:
+- **Bitmask State Tracking:** Rows, columns, and 3×3 boxes are represented as 9-bit integers. Checking if a digit is valid or placing a digit requires only bitwise operations (`&`, `|`, `^`), which executes in nanoseconds.
+- **Minimum Remaining Values (MRV):** Instead of scanning cells in reading order, the solver always selects the cell with the **fewest possible candidates**. If a cell has only 1 legal candidate, it is solved immediately. This prunes exponential branches and solves even diabolical boards (e.g. Arto Inkala's puzzle) in less than 2 milliseconds.
+- **Uniqueness Verification:** The puzzle generator uses `count_solutions(board, limit=2)` with early termination to verify that generated puzzles possess exactly one valid solution.
+- **Logical Deductions:** The hint engine analyzes the board state for **Naked Singles** (cells where all other 8 digits are blocked) and **Hidden Singles** (digits that can only fit in one location within a row, column, or box), explaining the logical step clearly to the player.
 
-1. Find the first empty cell, scanning left to right and top to bottom.
-2. Try the digits 1 to 9 in that cell.
-3. A digit is allowed only if it does not already appear in the cell's row, column or 3×3 box.
-4. If the digit is allowed, place it and recursively solve the rest of the board.
-5. If the rest of the board can't be solved, remove the digit (backtrack) and try the next one.
-6. If no digit fits, return failure to the previous cell. If no empty cells remain, the puzzle is solved.
+---
 
-Backtracking is simple and always finds a solution if one exists, but it can take many steps on hard boards because it tries digits in order without any extra logic. The visualizer's step and backtrack counters make that cost visible.
+## License
 
-## Known limitations
-
-- Generated puzzles are made by deleting random cells from a solved board. The generator does not check that the result has exactly one solution, so some puzzles may have more than one valid answer.
-- The Hint button fills in a random incorrect or empty cell rather than pointing to the next logical step.
+MIT License. Feel free to explore, modify, and build upon this project.
